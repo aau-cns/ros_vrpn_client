@@ -50,6 +50,7 @@
 #include <Eigen/Geometry>
 #include <eigen_conversions/eigen_msg.h>
 #include <nav_msgs/Odometry.h>
+#include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/TransformStamped.h>
 #include <tf/transform_broadcaster.h>
 #include <glog/logging.h>
@@ -106,6 +107,8 @@ class Rigid_Body {
     // Advertising published topics.
     measured_target_transform_pub_ =
         nh.advertise<geometry_msgs::TransformStamped>("raw_transform", 1);
+    measured_target_pose_pub_ =
+        nh.advertise<geometry_msgs::PoseStamped>("raw_pose", 1);
     estimated_target_transform_pub_ =
         nh.advertise<geometry_msgs::TransformStamped>("estimated_transform", 1);
     estimated_target_odometry_pub_ =
@@ -132,6 +135,23 @@ class Rigid_Body {
     measured_target_transform_pub_.publish(target_state->measured_transform);
   }
 
+  // Publishes the raw measured target state to the transform message.
+  void publish_measured_pose(TargetState *target_state) {
+
+    geometry_msgs::PoseStamped pose;
+    pose.header = target_state->measured_transform.header;
+    pose.pose.position.x =
+        target_state->measured_transform.transform.translation.x;
+    pose.pose.position.y =
+        target_state->measured_transform.transform.translation.y;
+    pose.pose.position.z =
+        target_state->measured_transform.transform.translation.z;
+
+    pose.pose.orientation = target_state->measured_transform.transform.rotation;
+
+    measured_target_pose_pub_.publish(pose);
+  }
+
   // Publishes the estimated target state to the transform message and sends
   // tranform.
   void publish_estimated_transform(TargetState* target_state) {
@@ -153,6 +173,7 @@ class Rigid_Body {
  private:
   // Publishers
   ros::Publisher measured_target_transform_pub_;
+  ros::Publisher measured_target_pose_pub_;
   ros::Publisher estimated_target_transform_pub_;
   ros::Publisher estimated_target_odometry_pub_;
   tf::TransformBroadcaster br;
@@ -423,6 +444,7 @@ int main(int argc, char* argv[]) {
     // Publishing newly received data.
     if (fresh_data == true) {
       tool.publish_measured_transform(target_state);
+      tool.publish_measured_pose(target_state);
       tool.publish_estimated_transform(target_state);
       tool.publish_estimated_odometry(target_state);
       fresh_data = false;
