@@ -5,8 +5,22 @@ Ros interface for http://www.cs.unc.edu/Research/vrpn/
 
 Dependencies
 -------------------
-vrpn_catkin package from: https://github.com/ethz-asl/vrpn_catkin
+### ROS Packages
 
+Git clone the packages  `vrpn_catkin` `glog_catkin` and `catkin_simple`
+```sh
+git clone https://github.com/ethz-asl/vrpn_catkin
+git clone https://github.com/ethz-asl/glog_catkin.git
+git clone https://github.com/catkin/catkin_simple.git
+```
+
+You do not have to install glog by itself, if you encounter issues in which glog is not found for the build of `ros_vrpn_client` refere to the known issues section.
+
+### Other Libraries
+On Ubuntu 20.04 / ROS Noetic it might be necessary to install libtoolize and eigen conversions. For this run:
+```sh
+apt install libtool ros-noetic-eigen-conversions
+```
 
 Usage
 -----------------
@@ -65,3 +79,5 @@ code is in the "VRPN_CALLBACK track_target" function in
 ros_vrpn_client.cpp
 
 
+## Known issues
+Building `ros_vrpn_client` with catkin_make on Ubuntu 20.04 shows dependency issues. Using catkin build workds correctly. To solve this issue, ensure `glog_catkin` is build before `ros_vrpn_client` or switch to catkin build. In both cases `ros_vrpn_client` compiles on Ubuntu 20.04.
