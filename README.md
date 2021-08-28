@@ -22,6 +22,7 @@ On Ubuntu 20.04 / ROS Noetic it might be necessary to install `libtoolize` and `
 ```bash
 apt install libtool ros-$(rosversion -d)-eigen-conversions
 ```
+**If still compilation errors apprear, please read `Known issues` below.**
 
 Usage
 -----------------
@@ -82,3 +83,12 @@ code is in the "`VRPN_CALLBACK track_target`" function in
 
 ## Known issues
 Building `ros_vrpn_client` with `catkin_make` on Ubuntu 20.04 shows dependency issues. Using catkin build workds correctly. To solve this issue, ensure `glog_catkin` is built before `ros_vrpn_client` or switch to `catkin build`. In both cases `ros_vrpn_client` compiles on Ubuntu 20.04.
+
+This can be achieved for instance by only building one specific package with it's Dependencies
+```cmd
+catkin_make --only-pkg-with-deps glog_catkin -j 1
+# clear the white list again
+catkin_make -DCATKIN_WHITELIST_PACKAGES=""
+catkin_make -j 1
+```
+
