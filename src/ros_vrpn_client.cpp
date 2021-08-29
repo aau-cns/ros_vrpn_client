@@ -436,7 +436,7 @@ int main(int argc, char* argv[]) {
   // Creating object which handles data publishing
   Rigid_Body tool(private_nh, vrpn_server_ip, vrpn_port, object_name);
 
-  ros::Rate loop_rate(1000);  // TODO(gohlp): fix this
+  ros::Rate loop_rate(200);  // TODO(gohlp): fix this
 
   while (ros::ok()) {
     tool.step_vrpn();
@@ -447,6 +447,7 @@ int main(int argc, char* argv[]) {
       tool.publish_measured_pose(target_state);
       tool.publish_estimated_transform(target_state);
       tool.publish_estimated_odometry(target_state);
+      ROS_INFO_STREAM_THROTTLE(10, "ros_vrpn_client: heartbeat");
       fresh_data = false;
     }
     loop_rate.sleep();
